@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Практическая работа №5 — настройка системы контроля версий Git и публикация сайта через GitHub Pages." />
+  <title>Практическая работа №5 — Git и GitHub Pages</title>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card: #161b22;
+      --card-2: #1c2128;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #2f81f7;
+      --accent-hover: #58a6ff;
+      --green: #3fb950;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .28);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(47,129,247,.15), transparent 35%),
+        radial-gradient(circle at 90% 10%, rgba(63,185,80,.08), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(48, 54, 61, .8);
+      background: rgba(13, 17, 23, .82);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #2f81f7, #7c3aed);
+      box-shadow: 0 8px 20px rgba(47, 129, 247, .25);
+    }
+
+    nav {
+      display: flex;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 92px 0 58px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(22, 27, 34, .72);
+      color: #b7c4d5;
+      font-size: 13px;
+      margin-bottom: 22px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(63,185,80,.12);
+    }
+
+    h1 {
+      max-width: 850px;
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 1.04;
+      letter-spacing: -2.5px;
+      margin-bottom: 22px;
+    }
+
+    .gradient {
+      background: linear-gradient(90deg, #58a6ff, #a78bfa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 20px);
+      margin-bottom: 30px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 14px;
+      transition: .2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--card);
+    }
+
+    .btn-secondary:hover {
+      border-color: #6e7681;
+      transform: translateY(-1px);
+    }
+
+    section {
+      padding: 32px 0;
+    }
+
+    .section-title {
+      font-size: clamp(26px, 4vw, 38px);
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(28,33,40,.95), rgba(22,27,34,.95));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 19px;
+    }
+
+    .card p {
+      color: var(--muted);
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 18px;
+      padding: 26px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .step:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #21262d;
+      border: 1px solid var(--border);
+      font-weight: 800;
+      color: #58a6ff;
+    }
+
+    .step h3 {
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+
+    .step p {
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    pre {
+      overflow-x: auto;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #0b0f14;
+      color: #c9d1d9;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    code .cmd {
+      color: #79c0ff;
+    }
+
+    code .comment {
+      color: #8b949e;
+    }
+
+    .result {
+      margin: 56px 0 72px;
+      padding: 28px;
+      border-radius: 18px;
+      border: 1px solid rgba(47,129,247,.38);
+      background: linear-gradient(135deg, rgba(47,129,247,.10), rgba(124,58,237,.08));
+    }
+
+    .result strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+
+    .result p {
+      color: #aeb9c8;
+    }
+
+    footer {
+      padding: 28px 0 40px;
+      color: var(--muted);
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 760px) {
+      nav {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 64px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        letter-spacing: -1.4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container nav">
+      <a class="logo" href="#top">
+        <span class="logo-mark">G</span>
+        <span>Git Practice</span>
+      </a>
+
+      <nav>
+        <a href="#about">О работе</a>
+        <a href="#steps">Этапы</a>
+        <a href="#result">Результат</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="container">
+      <section class="hero">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Практическая работа №5
+        </div>
+
+        <h1>
+          Настройка системы
+          <span class="gradient">контроля версий Git</span>
+        </h1>
+
+        <p class="lead">
+          Знакомство с Git, удалёнными репозиториями GitHub и публикацией
+          статического сайта с помощью GitHub Pages.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#steps">Перейти к этапам</a>
+          <a class="btn btn-secondary" href="https://github.com/" target="_blank" rel="noopener">
+            Открыть GitHub
+          </a>
+        </div>
+      </section>
+
+      <section id="about">
+        <h2 class="section-title">Цель работы</h2>
+        <p class="section-subtitle">
+          Освоить базовые команды Git и научиться публиковать готовый проект в интернете.
+        </p>
+
+        <div class="grid">
+          <article class="card">
+            <h3>Git</h3>
+            <p>
+              Распределённая система контроля версий, которая позволяет сохранять
+              историю изменений проекта и возвращаться к предыдущим версиям.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>GitHub</h3>
+            <p>
+              Онлайн-сервис для хранения Git-репозиториев, совместной работы над
+              проектами и публикации сайтов через GitHub Pages.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="steps">
+        <h2 class="section-title">Порядок выполнения</h2>
+        <p class="section-subtitle">
+          Основные шаги, необходимые для настройки Git и публикации проекта.
+        </p>
+
+        <div class="step">
+          <div class="step-number">01</div>
+          <div>
+            <h3>Установка Git</h3>
+            <p>
+              Скачайте Git с официального сайта и выполните обычную установку.
+              После установки проверьте, что Git доступен в терминале.
+            </p>
+            <pre><code><span class="cmd">git --version</span></code></pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">02</div>
+          <div>
+            <h3>Настройка пользователя</h3>
+            <p>
+              Укажите имя и электронную почту. Эти данные будут записываться
+              в историю коммитов.
+            </p>
+            <pre><code><span class="cmd">git config --global user.name</span> "Ваше Имя"
+<span class="cmd">git config --global user.email</span> "ваша@почта.com"</code></pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">03</div>
+          <div>
+            <h3>Создание локального репозитория</h3>
+            <p>
+              Откройте папку проекта в Visual Studio Code, запустите терминал и
+              инициализируйте Git-репозиторий.
+            </p>
+            <pre><code><span class="cmd">git init</span>
+<span class="cmd">git add .</span>
+<span class="cmd">git commit -m</span> "Первый коммит"</code></pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">04</div>
+          <div>
+            <h3>Создание репозитория на GitHub</h3>
+            <p>
+              Создайте новый репозиторий в своём аккаунте GitHub, после чего
+              свяжите его с локальным проектом.
+            </p>
+            <pre><code><span class="cmd">git remote add origin</span> https://github.com/USERNAME/REPOSITORY.git
+<span class="cmd">git branch -M</span> main
+<span class="cmd">git push -u origin</span> main</code></pre>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">05</div>
+          <div>
+            <h3>Публикация через GitHub Pages</h3>
+            <p>
+              В настройках репозитория откройте раздел <b>Pages</b>, выберите
+              публикацию из ветки <b>main</b> и корневой папки проекта. После
+              сохранения GitHub создаст публичную ссылку на сайт.
+            </p>
+            <pre><code><span class="comment"># Пример адреса готового сайта:</span>
+https://USERNAME.github.io/REPOSITORY/</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="result">
+        <div class="result">
+          <strong>Результат работы</strong>
+          <p>
+            В ходе практической работы были изучены основные команды Git,
+            выполнена настройка пользователя, создан локальный и удалённый
+            репозиторий, а статический сайт опубликован с помощью GitHub Pages.
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      Практическая работа №5 · Git и GitHub Pages
+    </div>
+  </footer>
+</body>
+</html>
